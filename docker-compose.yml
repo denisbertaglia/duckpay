@@ -1,0 +1,18 @@
+services:
+  application:
+    container_name: "app-laravel-duckpay"
+    build:
+      context: ./docker/
+      dockerfile: Dockerfile
+    working_dir: /var/duckpay/duckpay
+    command: "php artisan serve --host 0.0.0.0 --port 8000"
+    volumes:
+      - ./:/var/duckpay/
+    networks:
+      - networks-laravel-duckpay
+    ports:
+      - 80:8000
+
+networks:
+  networks-laravel-duckpay:
+    driver: bridge
