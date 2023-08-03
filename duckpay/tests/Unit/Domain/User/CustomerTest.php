@@ -4,9 +4,9 @@ namespace Tests\Unit\Domain\User;
 
 use App\Domain\Email;
 use App\Domain\IdentifierCode;
-use App\Domain\Login\Login;
-use App\Domain\Login\UserType;
 use App\Domain\User\Customer;
+use App\Domain\User\User;
+use App\Domain\User\UserType;
 use PHPUnit\Framework\TestCase;
 
 class CustomerTest extends TestCase
@@ -31,13 +31,13 @@ class CustomerTest extends TestCase
             0 => new Email($idEmail2,false,$email2),
         ];
 
-        $login = new Login($idLogin,$userType, $name,$email1,'tiruetoyy');
+        $login = new User($idLogin,$userType, $name,$emails,'tiruetoyy');
         $customer = new Customer($id,$login,$name,$emails,$cpf,'0');
 
-        $this->assertEquals($name,$customer->name());
-        $this->assertEquals($cpf,$customer->cpf());
-        $this->assertEquals($balance,$customer->balance());
-        $this->assertEquals($emails,$customer->emails());
+        $this->assertEquals($name,$customer->getName());
+        $this->assertEquals($cpf,$customer->getCpf());
+        $this->assertEquals($balance,$customer->getBalance());
+        $this->assertEquals($emails,$customer->getEmails());
 
     }
 }

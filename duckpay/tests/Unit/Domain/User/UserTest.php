@@ -1,13 +1,14 @@
 <?php
 
-namespace Domain\Login;
+namespace Domain\User;
 
+use App\Domain\Email;
 use App\Domain\IdentifierCode;
-use App\Domain\Login\Login;
-use App\Domain\Login\UserType;
+use App\Domain\User\User;
+use App\Domain\User\UserType;
 use PHPUnit\Framework\TestCase;
 
-class LoginTest extends TestCase
+class UserTest extends TestCase
 {
     /**
      * A basic unit test example.
@@ -17,9 +18,18 @@ class LoginTest extends TestCase
         $id = new IdentifierCode('1');
         $userType = new UserType(UserType::TYPE['CUSTOMER']);
         $name = 'John';
-        $email = 'teste@teste.com';
+
+        $idEmail1 = new IdentifierCode('2');
+        $idEmail2 = new IdentifierCode('4');
+        $email1 = 'john@teste.com';
+        $email2 = 'john_test@teste.com';
+        $emails = [
+            0 => new Email($idEmail1,true,$email1),
+            0 => new Email($idEmail2,false,$email2),
+        ];
+
         $password = 'rtyuio123';
-        $login = new Login($id,$userType,$name,$email,$password);
+        $login = new User($id,$userType,$name,$emails,$password);
 
         $loginReflection = new \ReflectionObject($login);
         $propertyPassword = $loginReflection->getProperty('password');
@@ -27,9 +37,9 @@ class LoginTest extends TestCase
         $tee = $propertyPassword->getValue($login);
         $passwordData = $propertyPassword->getValue($login);
 
-        $this->assertEquals($login->id(),'1', "Set Id");
-        $this->assertEquals($login->name(),$name, "Set name");
-        $this->assertEquals($login->email(),$email, "Set email");
+        $this->assertEquals($login->getId(),'1', "Set Id");
+        $this->assertEquals($login->getName(),$name, "Set name");
+        $this->assertEquals($login->getEmails(),$emails, "Set email");
         $this->assertEquals($passwordData, $password, "Set password");
     }
 }

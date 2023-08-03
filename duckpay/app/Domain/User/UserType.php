@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domain\Login;
+namespace App\Domain\User;
 
 class UserType
 {
@@ -23,7 +23,7 @@ class UserType
     /**
      * @return string
      */
-    public function type()
+    public function getType()
     {
         return array_search($this->type, SELF::TYPE);
     }

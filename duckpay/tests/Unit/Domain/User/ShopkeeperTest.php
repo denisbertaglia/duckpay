@@ -4,10 +4,9 @@ namespace Domain\User;
 
 use App\Domain\Email;
 use App\Domain\IdentifierCode;
-use App\Domain\Login\Login;
-use App\Domain\Login\UserType;
-use App\Domain\User\Customer;
 use App\Domain\User\Shopkeeper;
+use App\Domain\User\User;
+use App\Domain\User\UserType;
 use PHPUnit\Framework\TestCase;
 
 class ShopkeeperTest extends TestCase
@@ -32,13 +31,13 @@ class ShopkeeperTest extends TestCase
             0 => new Email($idEmail2,false,$email2),
         ];
 
-        $login = new Login($idLogin,$userType, $name,$email1,'tiruetoyy');
+        $login = new User($idLogin,$userType, $name,$emails,'tiruetoyy');
         $shopkeeper = new Shopkeeper($id,$login,$name,$emails,$cnpj,'0');
 
-        $this->assertEquals($name,$shopkeeper->name());
-        $this->assertEquals($cnpj,$shopkeeper->cnpj());
-        $this->assertEquals($balance,$shopkeeper->balance());
-        $this->assertEquals($emails,$shopkeeper->emails());
+        $this->assertEquals($name,$shopkeeper->getName());
+        $this->assertEquals($cnpj,$shopkeeper->getCnpj());
+        $this->assertEquals($balance,$shopkeeper->getBalance());
+        $this->assertEquals($emails,$shopkeeper->getEmails());
 
     }
 }

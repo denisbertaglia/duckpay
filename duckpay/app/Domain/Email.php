@@ -8,7 +8,7 @@ class Email
     private bool $login;
     private string $email;
 
-    public function __construct(IdentifierCode $id, bool $toLogin, string $email)
+    public function __construct(IdentifierCode $id,  string $email,bool $toLogin)
     {
         $this->id= $id;
         $this->login= $toLogin;

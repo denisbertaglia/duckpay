@@ -14,9 +14,9 @@ class EmailTest extends TestCase
     public function test_example(): void
     {
         $id = new IdentifierCode('2');
-        $email = new Email($id ,true,'john@teste.com');
+        $email = new Email($id ,'john@teste.com',true);
 
-        $this->assertTrue($email->isLogin(), 'Login e-mail');
+        $this->assertTrue($email->isLogin(), 'User e-mail');
         $this->assertEquals('2', $email->id(), 'Set id');
         $this->assertEquals('john@teste.com', $email->email(),'Set e-mail');
     }

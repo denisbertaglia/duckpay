@@ -2,9 +2,10 @@
 
 namespace App\Domain\Login;
 
+use App\Domain\Email;
 use App\Domain\IdentifierCode;
 
 interface LoginService
 {
-    public function validLogin(IdentifierCode $idUser, string $password) :bool;
+    public function loggingIn(IdentifierCode $idUser, Email $email, string $password) :bool;
 }

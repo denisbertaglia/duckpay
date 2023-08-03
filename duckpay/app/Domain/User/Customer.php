@@ -2,19 +2,17 @@
 
 namespace App\Domain\User;
 
-use App\Domain\Email;
 use App\Domain\IdentifierCode;
-use App\Domain\Login\Login;
 
 class Customer
 {
     private IdentifierCode $id;
-    private Login $login;
+    private User $login;
     private string $name;
     private array $emails;
     private string $cpf;
     private string $balance;
-    public function __construct(IdentifierCode $id,Login $login, string $name, array $emails, string $cpf, string $balance ='0')
+    public function __construct(IdentifierCode $id, User $login, string $name, array $emails, string $cpf, string $balance ='0')
     {
         $this->id =$id;
         $this->login =$login;
@@ -27,7 +25,7 @@ class Customer
     /**
      * @return string
      */
-    public function name(): string
+    public function getName(): string
     {
         return $this->name;
     }
@@ -35,7 +33,7 @@ class Customer
     /**
      * @return array
      */
-    public function emails(): array
+    public function getEmails(): array
     {
         return $this->emails;
     }
@@ -43,7 +41,7 @@ class Customer
     /**
      * @return string
      */
-    public function cpf(): string
+    public function getCpf(): string
     {
         return $this->cpf;
     }
@@ -51,7 +49,7 @@ class Customer
     /**
      * @return string
      */
-    public function balance(): string
+    public function getBalance(): string
     {
         return $this->balance;
     }

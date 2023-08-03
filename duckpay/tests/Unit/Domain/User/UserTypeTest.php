@@ -1,8 +1,8 @@
 <?php
 
-namespace Domain\Login;
+namespace Domain\User;
 
-use App\Domain\Login\UserType;
+use App\Domain\User\UserType;
 use PHPUnit\Framework\TestCase;
 
 class UserTypeTest extends TestCase
@@ -13,6 +13,6 @@ class UserTypeTest extends TestCase
     public function test_create_user_type(): void
     {
         $userType = new UserType(UserType::TYPE['LOGIN'],);
-        $this->assertEquals('LOGIN',$userType->type(), "Type default is LOGIN");
+        $this->assertEquals('LOGIN',$userType->getType(), "Type default is LOGIN");
     }
 }

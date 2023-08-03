@@ -1,29 +1,30 @@
 <?php
 
-namespace App\Domain\Login;
+namespace App\Domain\User;
 
+use App\Domain\Email;
 use App\Domain\IdentifierCode;
 
-class Login
+class User
 {
     private IdentifierCode $id;
     private UserType $userType;
     private string $name;
-    private string $email;
+    private array $emails;
     private string $password;
-    public function __construct(IdentifierCode $id, UserType $userType, string $name, string $email, string $password)
+    public function __construct(IdentifierCode $id, UserType $userType, string $name, array $emails, string $password)
     {
         $this->id = $id;
         $this->userType = $userType;
         $this->name = $name;
-        $this->email = $email;
+        $this->emails = $emails;
         $this->password = $password;
     }
 
     /**
      * @return string
      */
-    public function id(): string
+    public function getId(): string
     {
         return $this->id->code();
     }
@@ -31,7 +32,7 @@ class Login
     /**
      * @return string
      */
-    public function userType(): string
+    public function getType(): string
     {
         return $this->userType->type();
     }
@@ -39,16 +40,17 @@ class Login
     /**
      * @return string
      */
-    public function name(): string
+    public function getName(): string
     {
         return $this->name;
     }
 
     /**
-     * @return string
+     * @return Email[]
      */
-    public function email(): string
+    public function getEmails(): array
     {
-        return $this->email;
+        return $this->emails;
     }
+
 }
