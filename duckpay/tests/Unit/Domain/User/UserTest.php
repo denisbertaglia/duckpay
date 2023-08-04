@@ -29,7 +29,8 @@ class UserTest extends TestCase
         ];
 
         $password = 'rtyuio123';
-        $login = new User($id,$userType,$name,$emails,$password);
+        $login = new User($id,$userType,$name,$emails);
+        $login->setPassword($password);
 
         $loginReflection = new \ReflectionObject($login);
         $propertyPassword = $loginReflection->getProperty('password');
@@ -41,5 +42,6 @@ class UserTest extends TestCase
         $this->assertEquals($login->getName(),$name, "Set name");
         $this->assertEquals($login->getEmails(),$emails, "Set email");
         $this->assertEquals($passwordData, $password, "Set password");
+        $this->assertEquals($password, $login->getPassword());
     }
 }

@@ -4,40 +4,19 @@ namespace App\Domain\User;
 
 use App\Domain\IdentifierCode;
 
-class Shopkeeper
+/**
+ * @property string $name
+ */
+class Shopkeeper extends User
 {
-    private IdentifierCode $id;
-    private User $login;
-    private string $name;
-    private array $emails;
     private string $cnpj;
-    private string $balance;
-    public function __construct(IdentifierCode $id, User $login, string $name, array $emails, string $cnpj, string $balance ='0')
+    private Account $account;
+    public function __construct(IdentifierCode $id, string $name, array $emails, string $cnpj, Account $account)
     {
-        $this->id =$id;
-        $this->login =$login;
-        $this->name =$name;
-        $this->emails =$emails;
+        parent::__construct( $id,  new UserType( UserType::TYPE['SHOPKEEPER']),  $name,  $emails);
         $this->cnpj =$cnpj;
-        $this->balance =$balance;
+        $this->account =$account;
     }
-
-    /**
-     * @return string
-     */
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    /**
-     * @return array
-     */
-    public function getEmails(): array
-    {
-        return $this->emails;
-    }
-
     /**
      * @return string
      */
@@ -46,11 +25,12 @@ class Shopkeeper
         return $this->cnpj;
     }
 
+
     /**
-     * @return string
+     * @return Account
      */
-    public function getBalance(): string
+    public function getAccount(): Account
     {
-        return $this->balance;
+        return $this->account;
     }
 }

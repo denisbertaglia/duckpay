@@ -12,13 +12,12 @@ class User
     private string $name;
     private array $emails;
     private string $password;
-    public function __construct(IdentifierCode $id, UserType $userType, string $name, array $emails, string $password)
+    public function __construct(IdentifierCode $id, UserType $userType, string $name, array $emails)
     {
         $this->id = $id;
         $this->userType = $userType;
         $this->name = $name;
         $this->emails = $emails;
-        $this->password = $password;
     }
 
     /**
@@ -51,6 +50,21 @@ class User
     public function getEmails(): array
     {
         return $this->emails;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPassword(): string
+    {
+        return $this->password;
+    }
+    /**
+     * @param string $password
+     */
+    public function setPassword(string $password): void
+    {
+        $this->password = $password;
     }
 
 }

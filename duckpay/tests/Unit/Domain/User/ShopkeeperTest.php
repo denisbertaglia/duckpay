@@ -4,6 +4,7 @@ namespace Domain\User;
 
 use App\Domain\Email;
 use App\Domain\IdentifierCode;
+use App\Domain\User\Account;
 use App\Domain\User\Shopkeeper;
 use App\Domain\User\User;
 use App\Domain\User\UserType;
@@ -20,23 +21,20 @@ class ShopkeeperTest extends TestCase
         $cnpj = '95.454.908/0001-81';
         $balance = '0';
         $id = new IdentifierCode('2');
-        $idLogin = new IdentifierCode('2');
         $idEmail1 = new IdentifierCode('4');
         $email1 = 'john@teste.com';
         $idEmail2 = new IdentifierCode('4');
         $email2 = 'john_test@teste.com';
-        $userType = new UserType(UserType::TYPE['CUSTOMER']);
         $emails = [
             0 => new Email($idEmail1,true,$email1),
-            0 => new Email($idEmail2,false,$email2),
+            1 => new Email($idEmail2,false,$email2),
         ];
-
-        $login = new User($idLogin,$userType, $name,$emails,'tiruetoyy');
-        $shopkeeper = new Shopkeeper($id,$login,$name,$emails,$cnpj,'0');
+        $account = new Account(0);
+        $shopkeeper = new Shopkeeper($id,$name,$emails,$cnpj,$account);
 
         $this->assertEquals($name,$shopkeeper->getName());
         $this->assertEquals($cnpj,$shopkeeper->getCnpj());
-        $this->assertEquals($balance,$shopkeeper->getBalance());
+        $this->assertEquals($account,$shopkeeper->getAccount());
         $this->assertEquals($emails,$shopkeeper->getEmails());
 
     }
