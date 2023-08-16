@@ -25,7 +25,7 @@ class UserTest extends TestCase
         $email2 = 'john_test@teste.com';
         $emails = [
             0 => new Email($idEmail1,true,$email1),
-            0 => new Email($idEmail2,false,$email2),
+            1 => new Email($idEmail2,false,$email2),
         ];
 
         $password = 'rtyuio123';

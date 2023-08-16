@@ -12,7 +12,7 @@ class User
     private string $name;
     private array $emails;
     private string $password;
-    public function __construct(IdentifierCode $id, UserType $userType, string $name, array $emails)
+    public function __construct(IdentifierCode $id, UserType $userType, string $name, array $emails = [])
     {
         $this->id = $id;
         $this->userType = $userType;
@@ -20,6 +20,13 @@ class User
         $this->emails = $emails;
     }
 
+    /**
+     * @param IdentifierCode $id
+     */
+    public function setId(string $id): void
+    {
+        $this->id = new IdentifierCode($id);
+    }
     /**
      * @return string
      */
@@ -33,7 +40,7 @@ class User
      */
     public function getType(): string
     {
-        return $this->userType->type();
+        return $this->userType->getType();
     }
 
     /**
