@@ -15,21 +15,17 @@ class UserTest extends TestCase
      */
     public function test_create_login(): void
     {
-        $id = new IdentifierCode('1');
-        $userType = new UserType(UserType::TYPE['CUSTOMER']);
+        $id = '3';
+        $userType = UserType::TYPE['CUSTOMER'];
         $name = 'John';
 
-        $idEmail1 = new IdentifierCode('2');
-        $idEmail2 = new IdentifierCode('4');
-        $email1 = 'john@teste.com';
-        $email2 = 'john_test@teste.com';
         $emails = [
-            0 => new Email($idEmail1,true,$email1),
-            1 => new Email($idEmail2,false,$email2),
+            0 => Email::make('2','johns@teste.com',true),
+            1 => Email::make('4','john_test@teste.com',false),
         ];
 
         $password = 'rtyuio123';
-        $login = new User($id,$userType,$name,$emails);
+        $login = User::makeUser($id,$userType,$name,$emails);
         $login->setPassword($password);
 
         $loginReflection = new \ReflectionObject($login);
@@ -38,7 +34,7 @@ class UserTest extends TestCase
         $tee = $propertyPassword->getValue($login);
         $passwordData = $propertyPassword->getValue($login);
 
-        $this->assertEquals($login->getId(),'1', "Set Id");
+        $this->assertEquals($login->getId(),$id, "Set Id");
         $this->assertEquals($login->getName(),$name, "Set name");
         $this->assertEquals($login->getEmails(),$emails, "Set email");
         $this->assertEquals($passwordData, $password, "Set password");

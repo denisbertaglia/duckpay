@@ -19,22 +19,16 @@ class CustomerTest extends TestCase
     {
         $name = 'John Martins';
         $cpf = '999.999.999-00';
-        $id = new IdentifierCode('2');
-        $idEmail1 = new IdentifierCode('4');
-        $email1 = 'john@teste.com';
-        $idEmail2 = new IdentifierCode('4');
-        $email2 = 'john_test@teste.com';
+        $balance = '1122';
         $emails = [
-            0 => new Email($idEmail1,true,$email1),
-            1 => new Email($idEmail2,false,$email2),
+            0 => Email::make('1','john@teste.com',true),
+            1 => Email::make('2','john_test@teste.com',false),
         ];
-        $account = new Account(0);
-
-        $customer = new Customer($id,$name,$emails,$cpf,$account);
+        $customer = Customer::makeCustomer(2,$name,$cpf,$emails,$balance);
 
         $this->assertEquals($name,$customer->getName());
         $this->assertEquals($cpf,$customer->getCpf());
-        $this->assertEquals($account,$customer->getAccount());
+        $this->assertEquals($balance,$customer->getAccount()->getBalance());
         $this->assertEquals($emails,$customer->getEmails());
 
     }

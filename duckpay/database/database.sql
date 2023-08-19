@@ -17,5 +17,30 @@ CREATE TABLE emails
     user_id    integer    not null,
     created_at datetime,
     updated_at datetime,
+    foreign key (user_id) references users(id),
     primary key (id autoincrement)
+);
+
+CREATE TABLE shopkeepers
+(
+    id          integer not null,
+    cnpj         varchar    not null,
+    balance     varchar    not null,
+    user_id     integer    not null,
+    created_at  datetime,
+    updated_at  datetime,
+    foreign key (user_id) references users(id),
+    primary key (id autoincrement )
+);
+
+CREATE TABLE customers
+(
+    id          integer not null,
+    cpf         varchar    not null,
+    balance     varchar    not null,
+    user_id     integer    not null,
+    created_at  datetime,
+    updated_at  datetime,
+    foreign key (user_id) references users(id),
+    primary key (id autoincrement )
 );

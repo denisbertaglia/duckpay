@@ -19,6 +19,9 @@ class User
         $this->name = $name;
         $this->emails = $emails;
     }
+    public static function makeUser(string $id, string $userType, string $name, array $emails = []): User {
+        return new User( new IdentifierCode($id), new UserType( (int) $userType),$name ,$emails );
+    }
 
     /**
      * @param IdentifierCode $id
@@ -40,7 +43,7 @@ class User
      */
     public function getType(): string
     {
-        return $this->userType->getType();
+        return $this->userType->getFullType();
     }
 
     /**
@@ -60,6 +63,14 @@ class User
     }
 
     /**
+     * @param Email $email
+     */
+    public function setEmail(Email $email): void
+    {
+        $this->emails[]  = $email;
+    }
+
+    /**
      * @return string
      */
     public function getPassword(): string
@@ -74,4 +85,28 @@ class User
         $this->password = $password;
     }
 
+    /**
+     * @return string
+     */
+    public function getCpf(): string
+    {
+        return '';
+    }
+
+    /**
+     * @return string
+     */
+    public function getCnpj(): string
+    {
+        return '';
+    }
+
+
+    /**
+     * @return Account
+     */
+    public function getAccount(): Account
+    {
+        return new Account(0);
+    }
 }

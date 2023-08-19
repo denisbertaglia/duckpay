@@ -23,8 +23,16 @@ class UserType
     /**
      * @return string
      */
-    public function getType()
+    public function getType(): int
+    {
+        return $this->type;
+    }
+    /**
+     * @return string
+     */
+    public function getFullType(): string
     {
         return array_search($this->type, SELF::TYPE);
     }
+
 }

@@ -19,22 +19,18 @@ class ShopkeeperTest extends TestCase
     {
         $name = 'Magazine Acre do Sul';
         $cnpj = '95.454.908/0001-81';
-        $balance = '0';
-        $id = new IdentifierCode('2');
-        $idEmail1 = new IdentifierCode('4');
-        $email1 = 'john@teste.com';
-        $idEmail2 = new IdentifierCode('4');
-        $email2 = 'john_test@teste.com';
+        $balance = '345';
+
         $emails = [
-            0 => new Email($idEmail1,true,$email1),
-            1 => new Email($idEmail2,false,$email2),
+            0 => Email::make('3','maken@teste.com',true),
+            1 => Email::make('4','maken_test@teste.com',false),
         ];
-        $account = new Account(0);
-        $shopkeeper = new Shopkeeper($id,$name,$emails,$cnpj,$account);
+
+        $shopkeeper = Shopkeeper::makeShopkeeper('3',$name,$cnpj,$emails,$balance);
 
         $this->assertEquals($name,$shopkeeper->getName());
         $this->assertEquals($cnpj,$shopkeeper->getCnpj());
-        $this->assertEquals($account,$shopkeeper->getAccount());
+        $this->assertEquals($balance,$shopkeeper->getAccount()->getBalance());
         $this->assertEquals($emails,$shopkeeper->getEmails());
 
     }

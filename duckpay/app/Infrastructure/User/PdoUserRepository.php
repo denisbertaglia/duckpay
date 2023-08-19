@@ -2,7 +2,10 @@
 
 namespace App\Infrastructure\User;
 
+use App\Domain\Email;
 use App\Domain\IdentifierCode;
+use App\Domain\User\Customer;
+use App\Domain\User\Shopkeeper;
 use App\Domain\User\User;
 use App\Domain\User\UserRepository;
 use App\Domain\User\UserType;
@@ -19,14 +22,30 @@ class PdoUserRepository implements UserRepository
     private function hydrateList(PDOStatement $statement): array{
         $statementData = $statement->fetchAll();
         $usersList = [];
-        foreach ($statementData as $user) {
-            $usersList[] = new User(
-                new IdentifierCode((string)$user['id']),
-                new UserType((int) $user['user_type']),
-                $user['name']
-            );
+        foreach ($statementData as $index => $user) {
+            $id = $user['id'];
+            if(!array_key_exists($id, $usersList)){
+                $usersList[$id] = $this->hydrateUser($user);
+            }
+            if(!is_null($user['emailId'])){
+                $email = Email::make($user['emailId'],$user['email'],(boolean) $user['login']);
+                $usersList[$id]->setEmail($email);
+            }
         }
-        return $usersList;
+        return array_values($usersList);
+    }
+    private function hydrateUser(array $data): User{
+        $userType = new UserType((int) $data['user_type']);
+        $type = $userType->getFullType();
+        if($type==='LOGIN'){
+            return User::makeUser($data['id'], $data['user_type'], $data['name']);
+        }
+        if($type==='CUSTOMER'){
+            return Customer::makeCustomer($data['id'], $data['name'],$data['cpf'], [], $data['balanceCustomer']);
+        }
+        if($type==='SHOPKEEPER'){
+            return Shopkeeper::makeShopkeeper($data['id'], $data['name'],$data['cnpj'], [], $data['balanceShopkeeper']);
+        }
     }
     public function add(User $user): User
     {
@@ -36,7 +55,7 @@ class PdoUserRepository implements UserRepository
                 ->prepare(
                 "INSERT INTO users (user_type,name,password,created_at,updated_at )VALUES (:user_type,  :name, :password, :created_at, :updated_at )"
                 );
-            $data = $statement->execute([
+            $statement->execute([
                 ':user_type' => $user->getType(),
                 ':name' => $user->getName(),
                 ':password' => $password,
@@ -44,17 +63,74 @@ class PdoUserRepository implements UserRepository
                 ':updated_at' => $datetime
             ]);
             $user->setId($this->pdo->lastInsertId());
+            $this->addEmails($user);
+
+            $type = $user->getType();
+            if($type==='CUSTOMER'){
+                $this->addAsCustomer($user);
+            }
+            if($type==='SHOPKEEPER'){
+                $this->addAsShopkeeper($user);
+            }
             return $user;
         }
         throw new \DomainException('Bad config algorithm');
     }
+    private function addEmails(User $user): void{
+        $datetime = date_create()->format('Y-m-d H:i:s');
+        $userId = (string) $user->getId();
+        $statement = $this->pdo->prepare(
+            "INSERT INTO emails (email,login,user_id,created_at,updated_at)
+                    VALUES (:email,:login,:userId,:datetime,:datetime)"
+        );
 
+        $statement->bindValue('userId', $userId);
+        $statement->bindValue('datetime', $datetime);
+        foreach ($user->getEmails() as $index => $email) {
+            $statement->bindValue('email',(string) $email->email());
+            $statement->bindValue('login',$email->isLogin());
+            $statement->execute();
+            $email->setId($this->pdo->lastInsertId());
+        }
+    }
+    private function addAsCustomer(User $user): void{
+        $datetime = date_create()->format('Y-m-d H:i:s');
+        $statement = $this->pdo->prepare(
+            "INSERT INTO customers (cpf,balance,user_id,created_at,updated_at)
+                    VALUES (:cpf,:balance,:user_id, :datetime,:datetime)"
+        );
+        $statement->bindValue('cpf',$user->getCpf());
+        $statement->bindValue('balance',$user->getAccount()->getBalance());
+        $statement->bindValue('user_id',$user->getId());
+        $statement->bindValue('datetime',$datetime);
+        $statement->execute();
+    }
+    private function addAsShopkeeper(User $user): void{
+        $datetime = date_create()->format('Y-m-d H:i:s');
+        $statement = $this->pdo->prepare(
+            "INSERT INTO shopkeepers (cnpj,balance,user_id,created_at,updated_at)
+                    VALUES (:cnpj,:balance,:user_id, :datetime,:datetime)"
+        );
+        $statement->bindValue('cnpj',$user->getCnpj());
+        $statement->bindValue('balance',$user->getAccount()->getBalance());
+        $statement->bindValue('user_id',$user->getId());
+        $statement->bindValue('datetime',$datetime);
+        $statement->execute();
+    }
     public function findByIdCode(IdentifierCode $id): User | null
     {
-        $statement = $this->pdo
-            ->prepare(
-                "SELECT id,user_type,name,password,created_at,updated_at FROM users WHERE id = ?"
-            );
+        $statement = $this->pdo->query(
+            "SELECT
+                        users.id,user_type,name,password, users.created_at, users.updated_at,
+                        e.login, e.email, e.id as emailId,
+                        s.balance as balanceShopkeeper, s.cnpj as cnpj,
+                        c.balance as balanceCustomer, c.cpf as cpf
+                    FROM users
+                        LEFT JOIN emails e on users.id = e.user_id
+                        LEFT JOIN shopkeepers s on users.id = s.user_id
+                        LEFT JOIN customers c on users.id = c.user_id
+                    WHERE users.id = ?");
+
         $id = $id->code();
         $statement->bindParam(1, $id);
         $statement->execute();
@@ -62,10 +138,21 @@ class PdoUserRepository implements UserRepository
         $users = $this->hydrateList($statement);
         return array_shift( $users);
     }
-
     public function findAll(): array
     {
-        $statement = $this->pdo->query("SELECT id,user_type,name,password,created_at,updated_at FROM users");
-        return  $this->hydrateList($statement);
+        $statement = $this->pdo->query(
+            "SELECT
+                        users.id,user_type,name,password, users.created_at, users.updated_at,
+                        e.login, e.email, e.id as emailId,
+                        s.balance as balanceShopkeeper, s.cnpj as cnpj,
+                        c.balance as balanceCustomer, c.cpf as cpf
+                    FROM users
+                        LEFT JOIN emails e on users.id = e.user_id
+                        LEFT JOIN shopkeepers s on users.id = s.user_id
+                        LEFT JOIN customers c on users.id = c.user_id
+                    ORDER BY users.id,e.id");
+
+
+        return $this->hydrateList($statement);
     }
 }
