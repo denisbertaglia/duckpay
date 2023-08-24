@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('customers', function (Blueprint $table) {
+        Schema::create('finacialtransfers', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id');
-            $table->string('cpf');
-            $table->string('balance')->default('0');
+            $table->foreignId('customer_id');
+            $table->foreignId('shopkeeper_id');
+            $table->string('amount')->default('0');
             $table->timestamps();
         });
     }
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('customers');
+        Schema::dropIfExists('finacialtransfers');
     }
 };

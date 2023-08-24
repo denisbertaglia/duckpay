@@ -24,10 +24,8 @@ trait TestDB
     }
     public function setDataSet(string $dataSetName = ''): void
     {
-        if(in_array($dataSetName,$this->dataSetList)){
-            $dataSet = file_get_contents($this->datasetFilePath."$dataSetName.sql");
-            $this->db->exec($dataSet);
-        }
+        $dataSet = file_get_contents($this->datasetFilePath."$dataSetName.sql");
+        $this->db->exec($dataSet);
     }
     public function getConnection(): \PDO
     {

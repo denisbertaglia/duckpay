@@ -35,17 +35,16 @@ class PdoUserRepository implements UserRepository
         return array_values($usersList);
     }
     private function hydrateUser(array $data): User{
-        $userType = new UserType((int) $data['user_type']);
-        $type = $userType->getFullType();
-        if($type==='LOGIN'){
-            return User::makeUser($data['id'], $data['user_type'], $data['name']);
-        }
+        $userType = new UserType($data['user_type']);
+        $type = $userType->getName();
+        $user = User::make($data['id'], $data['name']);
         if($type==='CUSTOMER'){
-            return Customer::makeCustomer($data['id'], $data['name'],$data['cpf'], [], $data['balanceCustomer']);
+            $user->asCustomer($data['idCustomer'], $data['cpf'], $data['balanceCustomer']);
         }
         if($type==='SHOPKEEPER'){
-            return Shopkeeper::makeShopkeeper($data['id'], $data['name'],$data['cnpj'], [], $data['balanceShopkeeper']);
+            $user->asShopkeeper($data['idShopkeeper'], $data['cnpj'], $data['balanceShopkeeper']);
         }
+        return $user;
     }
     public function add(User $user): User
     {
@@ -56,7 +55,7 @@ class PdoUserRepository implements UserRepository
                 "INSERT INTO users (user_type,name,password,created_at,updated_at )VALUES (:user_type,  :name, :password, :created_at, :updated_at )"
                 );
             $statement->execute([
-                ':user_type' => $user->getType(),
+                ':user_type' => $user->getType()->getCode(),
                 ':name' => $user->getName(),
                 ':password' => $password,
                 ':created_at' => $datetime,
@@ -64,8 +63,7 @@ class PdoUserRepository implements UserRepository
             ]);
             $user->setId($this->pdo->lastInsertId());
             $this->addEmails($user);
-
-            $type = $user->getType();
+            $type = $user->getType()->getName();
             if($type==='CUSTOMER'){
                 $this->addAsCustomer($user);
             }
@@ -95,27 +93,38 @@ class PdoUserRepository implements UserRepository
     }
     private function addAsCustomer(User $user): void{
         $datetime = date_create()->format('Y-m-d H:i:s');
+        $financialEntity = $user->getFinancialEntity();
+        $cpf = $financialEntity->getTaxpayer();
+        $balance = $financialEntity->getAccount()->getBalance();
         $statement = $this->pdo->prepare(
             "INSERT INTO customers (cpf,balance,user_id,created_at,updated_at)
                     VALUES (:cpf,:balance,:user_id, :datetime,:datetime)"
         );
-        $statement->bindValue('cpf',$user->getCpf());
-        $statement->bindValue('balance',$user->getAccount()->getBalance());
+        $statement->bindValue('cpf',$cpf);
+        $statement->bindValue('balance', $balance);
         $statement->bindValue('user_id',$user->getId());
         $statement->bindValue('datetime',$datetime);
         $statement->execute();
+        $lastId = $this->pdo->lastInsertId();
+        $financialEntity->setId($lastId);
     }
     private function addAsShopkeeper(User $user): void{
         $datetime = date_create()->format('Y-m-d H:i:s');
+        $financialEntity = $user->getFinancialEntity();
+        $cnpj = $financialEntity->getTaxpayer();
+        $balance = $financialEntity->getAccount()->getBalance();
+
         $statement = $this->pdo->prepare(
             "INSERT INTO shopkeepers (cnpj,balance,user_id,created_at,updated_at)
                     VALUES (:cnpj,:balance,:user_id, :datetime,:datetime)"
         );
-        $statement->bindValue('cnpj',$user->getCnpj());
-        $statement->bindValue('balance',$user->getAccount()->getBalance());
+        $statement->bindValue('cnpj',(string) $cnpj);
+        $statement->bindValue('balance', (string) $balance);
         $statement->bindValue('user_id',$user->getId());
         $statement->bindValue('datetime',$datetime);
         $statement->execute();
+        $lastId = $this->pdo->lastInsertId();
+        $financialEntity->setId($lastId);
     }
     public function findByIdCode(IdentifierCode $id): User | null
     {
@@ -123,6 +132,7 @@ class PdoUserRepository implements UserRepository
             "SELECT
                         users.id,user_type,name,password, users.created_at, users.updated_at,
                         e.login, e.email, e.id as emailId,
+                        s.id as idShopkeeper,c.id as idCustomer,
                         s.balance as balanceShopkeeper, s.cnpj as cnpj,
                         c.balance as balanceCustomer, c.cpf as cpf
                     FROM users
@@ -144,6 +154,7 @@ class PdoUserRepository implements UserRepository
             "SELECT
                         users.id,user_type,name,password, users.created_at, users.updated_at,
                         e.login, e.email, e.id as emailId,
+                        s.id as idShopkeeper,c.id as idCustomer,
                         s.balance as balanceShopkeeper, s.cnpj as cnpj,
                         c.balance as balanceCustomer, c.cpf as cpf
                     FROM users

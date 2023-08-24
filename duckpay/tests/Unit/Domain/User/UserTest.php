@@ -16,7 +16,6 @@ class UserTest extends TestCase
     public function test_create_login(): void
     {
         $id = '3';
-        $userType = UserType::TYPE['CUSTOMER'];
         $name = 'John';
 
         $emails = [
@@ -25,7 +24,7 @@ class UserTest extends TestCase
         ];
 
         $password = 'rtyuio123';
-        $login = User::makeUser($id,$userType,$name,$emails);
+        $login = User::make($id,$name,$emails);
         $login->setPassword($password);
 
         $loginReflection = new \ReflectionObject($login);

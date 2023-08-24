@@ -12,17 +12,35 @@ class User
     private string $name;
     private array $emails;
     private string $password;
-    public function __construct(IdentifierCode $id, UserType $userType, string $name, array $emails = [])
+    private FinancialEntity | null $financialEntity = null;
+    public function __construct(IdentifierCode $id, string $name, array $emails = [])
     {
         $this->id = $id;
-        $this->userType = $userType;
+        $this->userType = new UserType(UserType::TYPE['LOGIN']);
         $this->name = $name;
         $this->emails = $emails;
     }
-    public static function makeUser(string $id, string $userType, string $name, array $emails = []): User {
-        return new User( new IdentifierCode($id), new UserType( (int) $userType),$name ,$emails );
+    public static function make(string $id, string $name, array $emails = []): User {
+        return new User( new IdentifierCode($id), $name ,$emails );
+    }
+    public function asCustomer(string $id, string $taxpayer, string $account): self {
+        $this->userType = new UserType( (int) UserType::TYPE['CUSTOMER']);
+        $this->financialEntity = Customer::make($id, $taxpayer, $account);
+        return $this;
+    }
+    public function asShopkeeper(string $id, string $taxpayer, string $account): self {
+        $this->userType = new UserType( (int) UserType::TYPE['SHOPKEEPER']);
+        $this->financialEntity = Shopkeeper::make($id, $taxpayer, $account);
+        return $this;
     }
 
+    /**
+     * @return FinancialEntity|null
+     */
+    public function getFinancialEntity(): ?FinancialEntity
+    {
+        return $this->financialEntity;
+    }
     /**
      * @param IdentifierCode $id
      */
@@ -41,9 +59,9 @@ class User
     /**
      * @return string
      */
-    public function getType(): string
+    public function getType(): UserType
     {
-        return $this->userType->getFullType();
+        return $this->userType;
     }
 
     /**

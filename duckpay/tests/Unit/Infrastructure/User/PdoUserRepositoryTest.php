@@ -16,20 +16,16 @@ class PdoUserRepositoryTest extends TestCase
 {
     use TestDB;
 
-    private UserRepository $pdoUserRepository;
-    private array $dataSetList = [
-        'test_find_users'
-    ];
+    private UserRepository $userRepository;
     protected function setUp(): void
     {
         parent::setUp();
-        $this->pdoUserRepository= new PdoUserRepository($this->getConnection());
+        $this->userRepository= new PdoUserRepository($this->getConnection());
     }
 
     public function test_add_user(): void
     {
         $id = '1';
-        $userType = UserType::TYPE['CUSTOMER'];
         $name = 'John';
         $emails = [
             0 => Email::make('1','johns@teste.com',true),
@@ -37,11 +33,11 @@ class PdoUserRepositoryTest extends TestCase
         ];
 
         $password = 'rtyuio123';
-        $login = User::makeUser($id,$userType,$name,$emails);
+        $login = User::make($id,$name,$emails);
         $login->setPassword($password);
 
-        $this->pdoUserRepository->add($login);
-        $users = $this->pdoUserRepository->findAll();
+        $this->userRepository->add($login);
+        $users = $this->userRepository->findAll();
         $this->assertCount(1,$users);
         /** @var User $user */
         $user = array_shift($users);
@@ -54,12 +50,11 @@ class PdoUserRepositoryTest extends TestCase
     public function test_find_all_users(): void
     {
         $this->setDataSet('test_find_users');
-        $users = $this->pdoUserRepository->findAll();
-
+        $users = $this->userRepository->findAll();
         $this->assertIsArray($users);
         $this->assertCount(3, $users);
         $usersType = array_map(function ( User $user){
-            return $user->getType();
+            return $user->getType()->getName();
         }, $users);
         $this->assertContains('SHOPKEEPER', $usersType);
         $this->assertContains('CUSTOMER', $usersType);
@@ -70,7 +65,7 @@ class PdoUserRepositoryTest extends TestCase
     {
         $this->setDataSet('test_find_users');
 
-        $user = $this->pdoUserRepository->findByIdCode(new IdentifierCode('2'));
+        $user = $this->userRepository->findByIdCode(new IdentifierCode('2'));
 
         $this->assertIsObject($user);
         $this->assertEquals("Thiago Anton", $user->getName());
@@ -86,10 +81,12 @@ class PdoUserRepositoryTest extends TestCase
         ];
 
         $password = 'rtyuio3-d}123';
-        $login = Customer::makeCustomer('1',$name,$cpf,$emails,$balance);
+        $login = User::make('1',$name,$emails,)
+                        ->asCustomer('1',$cpf,$balance);
         $login->setPassword($password);
-        $user = $this->pdoUserRepository->add($login);
+        $user = $this->userRepository->add($login);
         $this->assertNotEmpty($user->getId());
+        $this->assertNotEmpty($user->getFinancialEntity()->getId());
     }
     public function  test_add_user_shopkeeper(): void {
         $name = 'Magazine Acre do Sul';
@@ -101,12 +98,14 @@ class PdoUserRepositoryTest extends TestCase
             1 => Email::make('4','maken_test@teste.com',false),
         ];
 
-        $login = Shopkeeper::makeShopkeeper('3',$name,$cnpj,$emails,$balance);
+        $login = User::make('1',$name,$emails,)
+            ->asShopkeeper('1',$cnpj,$balance);
         $password = 'rtyuio3-d}123';
 
         $login->setPassword($password);
-        $user = $this->pdoUserRepository->add($login);
+        $user = $this->userRepository->add($login);
         $this->assertNotEmpty($user->getId());
+        $this->assertNotEmpty($user->getFinancialEntity()->getId());
 
     }
 }
