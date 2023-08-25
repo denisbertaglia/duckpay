@@ -18,7 +18,7 @@ class PdoFinancialMovementRepository implements FinancialMovementRepository
         $this->pdo = $pdo;
         $this->userRepository = $userRepository;
     }
-    public function accountTransfer(IdentifierCode $idCustomer, IdentifierCode $idShopkeeper, string $amount): Financialtransfer
+    public function accountTransferRecord(IdentifierCode $idCustomer, IdentifierCode $idShopkeeper, string $amount): Financialtransfer
     {
         $datetime = date_create()->format('Y-m-d H:i:s');
         $pdo = $this->pdo;

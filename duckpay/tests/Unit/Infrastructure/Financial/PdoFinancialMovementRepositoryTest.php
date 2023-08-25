@@ -26,20 +26,20 @@ class PdoFinancialMovementRepositoryTest extends TestCase
 
     /**
      * A basic unit test example.
-     * @dataProvider dataProvider
+     * @dataProvider dataProviderCreateFinancialMovement
      */
     public function test_create_financial_movement(string $idCustomer, string $idShopkeeper, $amount): void
     {
         $this->setDataSet('test_create_financial_movement');
         $customer = new IdentifierCode($idCustomer);
         $shopkeeper = new IdentifierCode($idShopkeeper);
-        $financialTransfer = $this->financialMovementRepository->accountTransfer($customer, $shopkeeper, $amount);
+        $financialTransfer = $this->financialMovementRepository->accountTransferRecord($customer, $shopkeeper, $amount);
         $this->assertEquals($amount, $financialTransfer->getAmount());
         $this->assertNotEmpty($financialTransfer->getId());
     }
-    public function dataProvider(){
+    public function dataProviderCreateFinancialMovement(){
         return [
-            ['1','2','9000']
+            ['1','2','9000'],
         ];
     }
 }

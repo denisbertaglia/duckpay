@@ -7,5 +7,5 @@ use App\Domain\IdentifierCode;
 
 interface FinancialMovementRepository
 {
-    public function  accountTransfer(IdentifierCode $idCustomer, IdentifierCode $idShopkeeper, string $amount): Financialtransfer;
+    public function  accountTransferRecord(IdentifierCode $idCustomer, IdentifierCode $idShopkeeper, string $amount): Financialtransfer;
 }

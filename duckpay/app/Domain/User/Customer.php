@@ -19,14 +19,6 @@ class Customer implements  FinancialEntity
         return new Customer( new IdentifierCode($id), $taxpayer, new Account($accountBalance));
     }
     /**
-     * @return string
-     */
-    public function getCpf(): string
-    {
-        return $this->taxpayer;
-    }
-
-    /**
      * @return Account
      */
     public function getAccount(): Account

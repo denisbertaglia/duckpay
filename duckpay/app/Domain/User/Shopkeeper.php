@@ -22,14 +22,6 @@ class Shopkeeper  implements  FinancialEntity
         return new Shopkeeper( new IdentifierCode($id), $cnpj,  new Account($accountBalance));
     }
     /**
-     * @return string
-     */
-    public function getCnpj(): string
-    {
-        return $this->taxpayer;
-    }
-
-    /**
      * @return Account
      */
     public function getAccount(): Account
