@@ -4,8 +4,10 @@ namespace App\Domain\Financial;
 
 
 use App\Domain\IdentifierCode;
+use App\Domain\User\Customer;
+use App\Domain\User\Shopkeeper;
 
 interface FinancialMovementRepository
 {
-    public function  accountTransferRecord(IdentifierCode $idCustomer, IdentifierCode $idShopkeeper, string $amount): Financialtransfer;
+    public function  registerTransferAccountsCustomersShopkeeper(Customer $customer, Shopkeeper $shopkeeper, string $amount): Financialtransfer;
 }

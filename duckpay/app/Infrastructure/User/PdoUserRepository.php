@@ -3,8 +3,10 @@
 namespace App\Infrastructure\User;
 
 use App\Domain\Email;
+use App\Domain\Financial\Financialtransfer;
 use App\Domain\IdentifierCode;
 use App\Domain\User\Customer;
+use App\Domain\User\FinancialEntity;
 use App\Domain\User\Shopkeeper;
 use App\Domain\User\User;
 use App\Domain\User\UserRepository;
@@ -19,7 +21,7 @@ class PdoUserRepository implements UserRepository
     {
         $this->pdo = $pdo;
     }
-    private function hydrateList(PDOStatement $statement): array{
+    private function hydrateUserList(PDOStatement $statement): array{
         $statementData = $statement->fetchAll();
         $usersList = [];
         foreach ($statementData as $index => $user) {
@@ -46,6 +48,31 @@ class PdoUserRepository implements UserRepository
         }
         return $user;
     }
+    private function hydrateFinancialEntityList(PDOStatement $statement): array{
+        $statementData = $statement->fetchAll();
+        $financialEntityList = [];
+        foreach ($statementData as $index => $user) {
+            $id = $user['id'];
+            if(!array_key_exists($id, $financialEntityList)){
+                $financialEntityList[$id] = $this->hydrateFinancialEntity($user);
+            }
+        }
+        return array_values($financialEntityList);
+    }
+    private function hydrateFinancialEntity(array $data): FinancialEntity | null{
+        $userType = new UserType($data['user_type']);
+        $type = $userType->getName();
+        $financialEntity = null;
+        if($type==='CUSTOMER'){
+            $financialEntity = Customer::make($data['idCustomer'], $data['cpf'], $data['balanceCustomer']);
+        }
+        if($type==='SHOPKEEPER'){
+            $financialEntity = Shopkeeper::make($data['idShopkeeper'], $data['cnpj'], $data['balanceShopkeeper']);
+        }
+
+        return $financialEntity;
+    }
+
     public function add(User $user): User
     {
         $datetime = date_create()->format('Y-m-d H:i:s');
@@ -145,7 +172,7 @@ class PdoUserRepository implements UserRepository
         $statement->bindParam(1, $id);
         $statement->execute();
 
-        $users = $this->hydrateList($statement);
+        $users = $this->hydrateUserList($statement);
         return array_shift( $users);
     }
     public function findAll(): array
@@ -164,6 +191,27 @@ class PdoUserRepository implements UserRepository
                     ORDER BY users.id,e.id");
 
 
-        return $this->hydrateList($statement);
+        return $this->hydrateUserList($statement);
+    }
+
+    public function findFinancialEntityByIdCode(IdentifierCode $idUser): null|FinancialEntity
+    {
+        $statement = $this->pdo->query(
+            "SELECT
+                        users.id,user_type,
+                        s.id as idShopkeeper,c.id as idCustomer,
+                        s.balance as balanceShopkeeper, s.cnpj as cnpj,
+                        c.balance as balanceCustomer, c.cpf as cpf
+                    FROM users
+                        LEFT JOIN shopkeepers s on users.id = s.user_id
+                        LEFT JOIN customers c on users.id = c.user_id
+                    WHERE users.id = ?");
+
+        $id = $idUser->code();
+        $statement->bindParam(1, $id);
+        $statement->execute();
+
+        $financialEntity = $this->hydrateFinancialEntityList($statement);
+        return array_shift( $financialEntity);
     }
 }

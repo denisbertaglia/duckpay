@@ -106,6 +106,16 @@ class PdoUserRepositoryTest extends TestCase
         $user = $this->userRepository->add($login);
         $this->assertNotEmpty($user->getId());
         $this->assertNotEmpty($user->getFinancialEntity()->getId());
+    }
+    public function test_find_financial_entity_by_id_code(){
+        $this->setDataSet('test_find_financial_entity_by_id_code');
+
+        $customer = $this->userRepository->findFinancialEntityByIdCode(new IdentifierCode('2'));
+        $shopkeeper = $this->userRepository->findFinancialEntityByIdCode(new IdentifierCode('3'));
+
+        $this->assertEquals('50000',$customer->getAccount()->getBalance());
+        $this->assertEquals('40000',$shopkeeper->getAccount()->getBalance());
+
 
     }
 }

@@ -31,9 +31,9 @@ class PdoFinancialMovementRepositoryTest extends TestCase
     public function test_create_financial_movement(string $idCustomer, string $idShopkeeper, $amount): void
     {
         $this->setDataSet('test_create_financial_movement');
-        $customer = new IdentifierCode($idCustomer);
-        $shopkeeper = new IdentifierCode($idShopkeeper);
-        $financialTransfer = $this->financialMovementRepository->accountTransferRecord($customer, $shopkeeper, $amount);
+        $customer = $this->userRepository->findByIdCode(new IdentifierCode($idCustomer))->getFinancialEntity();
+        $shopkeeper = $this->userRepository->findByIdCode(new IdentifierCode($idShopkeeper))->getFinancialEntity();
+        $financialTransfer = $this->financialMovementRepository->registerTransferAccountsCustomersShopkeeper($customer, $shopkeeper, $amount);
         $this->assertEquals($amount, $financialTransfer->getAmount());
         $this->assertNotEmpty($financialTransfer->getId());
     }
