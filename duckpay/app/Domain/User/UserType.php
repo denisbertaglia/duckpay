@@ -23,14 +23,14 @@ class UserType
     /**
      * @return string
      */
-    public function getType(): int
+    public function getCode(): int
     {
         return $this->type;
     }
     /**
-     * @return string
+     * @return string ["LOGIN", "CUSTOMER", "SHOPKEEPER"]
      */
-    public function getFullType(): string
+    public function getName(): string
     {
         return array_search($this->type, SELF::TYPE);
     }

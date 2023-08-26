@@ -17,21 +17,14 @@ class ShopkeeperTest extends TestCase
      */
     public function test_create_shopkeeper(): void
     {
-        $name = 'Magazine Acre do Sul';
         $cnpj = '95.454.908/0001-81';
         $balance = '345';
 
-        $emails = [
-            0 => Email::make('3','maken@teste.com',true),
-            1 => Email::make('4','maken_test@teste.com',false),
-        ];
+        $shopkeeper = Shopkeeper::make('3', $cnpj,$balance);
 
-        $shopkeeper = Shopkeeper::makeShopkeeper('3',$name,$cnpj,$emails,$balance);
-
-        $this->assertEquals($name,$shopkeeper->getName());
-        $this->assertEquals($cnpj,$shopkeeper->getCnpj());
+        $this->assertEquals($cnpj,$shopkeeper->getTaxpayer());
         $this->assertEquals($balance,$shopkeeper->getAccount()->getBalance());
-        $this->assertEquals($emails,$shopkeeper->getEmails());
+        $this->assertEquals('CNPJ',$shopkeeper->getTaxpayerType());
 
     }
 }

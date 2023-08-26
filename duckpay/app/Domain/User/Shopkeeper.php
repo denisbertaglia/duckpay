@@ -7,33 +7,44 @@ use App\Domain\IdentifierCode;
 /**
  * @property string $name
  */
-class Shopkeeper extends User
+class Shopkeeper  implements  FinancialEntity
 {
-    private string $cnpj;
+    private IdentifierCode $id;
+    private string $taxpayer;
     private Account $account;
-    public function __construct(IdentifierCode $id, string $name, string $cnpj, Account $account, array $emails = [])
+    public function __construct(IdentifierCode $id, string $taxpayer, Account $account)
     {
-        parent::__construct( $id,  new UserType( UserType::TYPE['SHOPKEEPER']),  $name,  $emails);
-        $this->cnpj =$cnpj;
-        $this->account =$account;
+        $this->id = $id;
+        $this->taxpayer = $taxpayer;
+        $this->account = $account;
     }
-    public static function makeShopkeeper(string $id, string $name,  string $cnpj, array $emails = [], string $accountBalance ='0'): Shopkeeper {
-        return new Shopkeeper( new IdentifierCode($id), $name , $cnpj,  new Account($accountBalance), $emails);
+    public static function make(string $id, string $cnpj, string $accountBalance ='0'): Shopkeeper {
+        return new Shopkeeper( new IdentifierCode($id), $cnpj,  new Account($accountBalance));
     }
-    /**
-     * @return string
-     */
-    public function getCnpj(): string
-    {
-        return $this->cnpj;
-    }
-
-
     /**
      * @return Account
      */
     public function getAccount(): Account
     {
         return $this->account;
+    }
+
+    public function getTaxpayer(): string
+    {
+        return $this->taxpayer;
+    }
+
+    public function getTaxpayerType(): string
+    {
+        return "CNPJ";
+    }
+    public function getId(): string
+    {
+        return $this->id->code();
+    }
+
+    public function setId(string $id): void
+    {
+        $this->id = new IdentifierCode($id);
     }
 }
