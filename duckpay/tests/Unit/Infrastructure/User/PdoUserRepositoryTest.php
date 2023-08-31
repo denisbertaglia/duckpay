@@ -113,8 +113,8 @@ class PdoUserRepositoryTest extends TestCase
         $customer = $this->userRepository->findFinancialEntityByIdCode(new IdentifierCode('2'));
         $shopkeeper = $this->userRepository->findFinancialEntityByIdCode(new IdentifierCode('3'));
 
-        $this->assertEquals('50000',$customer->getAccount()->getBalance());
-        $this->assertEquals('40000',$shopkeeper->getAccount()->getBalance());
+        $this->assertEquals('500.00',$customer->getAccount()->getBalance());
+        $this->assertEquals('400.00',$shopkeeper->getAccount()->getBalance());
 
 
     }

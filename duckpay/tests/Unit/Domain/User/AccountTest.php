@@ -12,7 +12,7 @@ class AccountTest extends TestCase
      */
     public function test_create_account(): void
     {
-        $account = new Account('0');
-        $this->assertEquals($account->getBalance(),'0');
+        $account = new Account('500');
+        $this->assertEquals($account->getBalance(),'500.00');
     }
 }

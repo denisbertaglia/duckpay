@@ -18,7 +18,7 @@ class CustomerTest extends TestCase
     public function test_create_customer(): void
     {
         $cpf = '999.999.999-00';
-        $balance = '1122';
+        $balance = '1122.00';
         $customer = Customer::make(2,$cpf,$balance);
 
         $this->assertEquals($cpf,$customer->getTaxpayer());

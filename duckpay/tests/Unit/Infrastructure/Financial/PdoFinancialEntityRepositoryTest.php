@@ -49,7 +49,7 @@ class PdoFinancialEntityRepositoryTest extends TestCase
     public function dataProviderAccountTranfer(){
 
         return [
-            [1,2,'500','499500','500500'],
+            [1,2,'500.00','4500.00','5500.00'],
         ];
     }
 
