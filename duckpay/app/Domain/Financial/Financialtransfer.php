@@ -9,12 +9,12 @@ use App\Domain\User\Shopkeeper;
 class Financialtransfer
 {
     private IdentifierCode $id;
-    private string $amount = '0';
+    private Money $amount;
     private Customer $payeer;
 
     private Shopkeeper $payee;
 
-    public function __construct(IdentifierCode $id, Customer $payeer, Shopkeeper $payee, string $amount='0')
+    public function __construct(IdentifierCode $id, Customer $payeer, Shopkeeper $payee, Money $amount)
     {
         $this->id = $id;
         $this->payeer = $payeer;
@@ -22,7 +22,7 @@ class Financialtransfer
         $this->amount = $amount;
     }
     public static function make(string $id, Customer $payeer, Shopkeeper $payee, string $amount='0'): self{
-        return new self(new IdentifierCode($id),   $payeer,  $payee,  $amount);
+        return new self(new IdentifierCode($id),   $payeer,  $payee,  new Money($amount));
     }
 
     /**
@@ -50,9 +50,9 @@ class Financialtransfer
     }
 
     /**
-     * @return string
+     * @return Money
      */
-    public function getAmount(): string
+    public function getAmount(): Money
     {
         return $this->amount;
     }

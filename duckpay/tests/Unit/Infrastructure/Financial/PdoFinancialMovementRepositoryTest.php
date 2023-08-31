@@ -34,12 +34,12 @@ class PdoFinancialMovementRepositoryTest extends TestCase
         $customer = $this->userRepository->findByIdCode(new IdentifierCode($idCustomer))->getFinancialEntity();
         $shopkeeper = $this->userRepository->findByIdCode(new IdentifierCode($idShopkeeper))->getFinancialEntity();
         $financialTransfer = $this->financialMovementRepository->registerTransferAccountsCustomersShopkeeper($customer, $shopkeeper, $amount);
-        $this->assertEquals($amount, $financialTransfer->getAmount());
+        $this->assertEquals($amount, $financialTransfer->getAmount()->value());
         $this->assertNotEmpty($financialTransfer->getId());
     }
     public function dataProviderCreateFinancialMovement(){
         return [
-            ['1','2','9000'],
+            ['1','2','9000.00'],
         ];
     }
 }

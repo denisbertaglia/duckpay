@@ -18,7 +18,7 @@ class ShopkeeperTest extends TestCase
     public function test_create_shopkeeper(): void
     {
         $cnpj = '95.454.908/0001-81';
-        $balance = '345';
+        $balance = '345.00';
 
         $shopkeeper = Shopkeeper::make('3', $cnpj,$balance);
 
