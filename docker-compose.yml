@@ -1,6 +1,6 @@
 services:
   application:
-    container_name: "app-laravel-duckpay"
+    container_name: "laravel-duckpay"
     build:
       context: ./docker/
       dockerfile: Dockerfile
