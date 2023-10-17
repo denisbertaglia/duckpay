@@ -19,8 +19,9 @@ class Email
     public static function make(string $id,  string $email, bool $toLogin): Email{
         return new Email(new IdentifierCode($id),$email,$toLogin);
     }
+
     /**
-     * @param IdentifierCode $id
+     * @param string $id
      */
     public function setId(string $id): void
     {

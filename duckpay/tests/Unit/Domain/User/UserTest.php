@@ -27,16 +27,9 @@ class UserTest extends TestCase
         $login = User::make($id,$name,$emails);
         $login->setPassword($password);
 
-        $loginReflection = new \ReflectionObject($login);
-        $propertyPassword = $loginReflection->getProperty('password');
-        $propertyPassword->setAccessible(true);
-        $tee = $propertyPassword->getValue($login);
-        $passwordData = $propertyPassword->getValue($login);
-
         $this->assertEquals($login->getId(),$id, "Set Id");
         $this->assertEquals($login->getName(),$name, "Set name");
         $this->assertEquals($login->getEmails(),$emails, "Set email");
-        $this->assertEquals($passwordData, $password, "Set password");
         $this->assertEquals($password, $login->getPassword());
     }
 }
