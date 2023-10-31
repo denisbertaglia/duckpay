@@ -1,13 +1,13 @@
 <?php
 
-namespace Tests\Unit\Infrastructure\Financial;
+namespace Tests\Feature\Infrastructure\Financial;
 
 use App\Domain\Financial\FinancialMovementRepository;
 use App\Domain\IdentifierCode;
 use App\Domain\User\UserRepository;
 use App\Infrastructure\User\PdoUserRepository;
 use PHPUnit\Framework\TestCase;
-use Tests\Unit\Infrastructure\TestDB;
+use Tests\Feature\Infrastructure\TestDB;
 use App\Infrastructure\Financial\PdoFinancialMovementRepository;
 
 class PdoFinancialMovementRepositoryTest extends TestCase
@@ -37,7 +37,7 @@ class PdoFinancialMovementRepositoryTest extends TestCase
         $this->assertEquals($amount, $financialTransfer->getAmount()->value());
         $this->assertNotEmpty($financialTransfer->getId());
     }
-    public function dataProviderCreateFinancialMovement(){
+    public static function dataProviderCreateFinancialMovement(){
         return [
             ['1','2','9000.00'],
         ];

@@ -20,8 +20,10 @@ class User
         $this->name = $name;
         $this->emails = $emails;
     }
-    public static function make(string $id, string $name, array $emails = []): User {
-        return new User( new IdentifierCode($id), $name ,$emails );
+    public static function make(string $id, string $name, array $emails = [],int $userType = 0): User {
+        $user = new User( new IdentifierCode($id), $name ,$emails );
+        $user->userType = new UserType($userType);
+        return $user;
     }
     public function asCustomer(string $id, string $taxpayer, string $account): self {
         $this->userType = new UserType( (int) UserType::TYPE['CUSTOMER']);

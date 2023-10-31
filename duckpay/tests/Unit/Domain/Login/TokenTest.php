@@ -11,7 +11,7 @@ class TokenTest extends TestCase
     /**
      * A basic unit test example.
      */
-    public function test_example(): void
+    public function test_token(): void
     {
         $id = new IdentifierCode('1');
         $tokenString = "f3e21fbc73dde9dacaa69c8c7696507f5c647ef7";

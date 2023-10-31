@@ -1,11 +1,11 @@
 <?php
 
-namespace Tests\Unit\Infrastructure\Service;
+namespace Tests\Feature\Infrastructure\Service;
 
-use App\Infrastructure\Service\DB;
-use PHPUnit\Framework\TestCase;
+use App\Infrastructure\DB;
 use PDO;
-use Tests\Unit\Infrastructure\TestDB;
+use PHPUnit\Framework\TestCase;
+use Tests\Feature\Infrastructure\TestDB;
 
 class DBTest extends TestCase
 {

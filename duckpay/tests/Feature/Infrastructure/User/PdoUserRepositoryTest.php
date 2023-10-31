@@ -1,5 +1,5 @@
 <?php
-namespace Tests\Unit\Infrastructure\User;
+namespace Tests\Feature\Infrastructure\User;
 
 use App\Domain\Email;
 use App\Domain\IdentifierCode;
@@ -10,7 +10,7 @@ use App\Domain\User\UserRepository;
 use App\Domain\User\UserType;
 use App\Infrastructure\User\PdoUserRepository;
 use PHPUnit\Framework\TestCase;
-use Tests\Unit\Infrastructure\TestDB;
+use Tests\Feature\Infrastructure\TestDB;
 
 class PdoUserRepositoryTest extends TestCase
 {

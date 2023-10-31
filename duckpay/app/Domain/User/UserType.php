@@ -34,5 +34,17 @@ class UserType
     {
         return array_search($this->type, SELF::TYPE);
     }
+    /**
+     * @param string $type ["LOGIN", "CUSTOMER", "SHOPKEEPER"]
+     * @return self
+
+     */
+    public static function make(string $type = 'LOGIN'): self{
+        if(in_array($type,SELF::TYPE)){
+            return new self(SELF::TYPE[$type]);
+        }
+        return new self(SELF::TYPE['LOGIN']);
+    }
+
 
 }

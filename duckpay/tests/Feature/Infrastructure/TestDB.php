@@ -1,8 +1,8 @@
 <?php
 
-namespace Tests\Unit\Infrastructure;
+namespace Tests\Feature\Infrastructure;
 
-use App\Infrastructure\Service\DB;
+use App\Infrastructure\DB;
 
 trait TestDB
 {

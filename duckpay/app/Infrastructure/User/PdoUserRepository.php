@@ -3,7 +3,6 @@
 namespace App\Infrastructure\User;
 
 use App\Domain\Email;
-use App\Domain\Financial\Financialtransfer;
 use App\Domain\IdentifierCode;
 use App\Domain\User\Customer;
 use App\Domain\User\FinancialEntity;
@@ -29,7 +28,7 @@ class PdoUserRepository implements UserRepository
             if(!array_key_exists($id, $usersList)){
                 $usersList[$id] = $this->hydrateUser($user);
             }
-            if(!is_null($user['emailId'])){
+            if(isset($user['emailId'])){
                 $email = Email::make($user['emailId'],$user['email'],(boolean) $user['login']);
                 $usersList[$id]->setEmail($email);
             }
@@ -39,7 +38,10 @@ class PdoUserRepository implements UserRepository
     private function hydrateUser(array $data): User{
         $userType = new UserType($data['user_type']);
         $type = $userType->getName();
-        $user = User::make($data['id'], $data['name']);
+        $user = User::make($data['id'], $data['name'],[],$data['user_type']);
+        if(!isset($data['cpf']) && !isset($data['cnpj'])){
+            return $user;
+        }
         if($type==='CUSTOMER'){
             $user->asCustomer($data['idCustomer'], $data['cpf'], $data['balanceCustomer']);
         }
@@ -196,7 +198,7 @@ class PdoUserRepository implements UserRepository
 
     public function findFinancialEntityByIdCode(IdentifierCode $idUser): null|FinancialEntity
     {
-        $statement = $this->pdo->query(
+        $statement = $this->pdo->prepare(
             "SELECT
                         users.id,user_type,
                         s.id as idShopkeeper,c.id as idCustomer,
@@ -208,10 +210,35 @@ class PdoUserRepository implements UserRepository
                     WHERE users.id = ?");
 
         $id = $idUser->code();
-        $statement->bindParam(1, $id);
+        $statement->bindParam(1, $id ,PDO::PARAM_INT);
         $statement->execute();
 
         $financialEntity = $this->hydrateFinancialEntityList($statement);
         return array_shift( $financialEntity);
+    }
+
+    public function findFilterAndPaginated(int $offset = 0, int $limit = 10, UserType $userType = new UserType()): array
+        {
+        $sql = "
+        SELECT users.id, users.user_type, users.name
+        FROM users
+        WHERE
+            EXISTS (SELECT 1 FROM customers WHERE customers.user_id = users.id)
+           OR EXISTS (SELECT 1 FROM shopkeepers WHERE shopkeepers.user_id = users.id)
+        ";
+        $filterType = $userType->getCode() != UserType::TYPE['LOGIN'];
+        if($filterType){
+            $sql .= "AND users.user_type = :user_type";
+        }
+        $sql .= "LIMIT :limit OFFSET :offset ";
+        $statement =  $this->pdo->prepare($sql);
+        if($filterType){
+            $statement->bindValue( ':user_type' ,$userType->getCode(),PDO::PARAM_INT);
+        }
+        $statement->bindValue( ':limit' , $limit,PDO::PARAM_INT);
+        $statement->bindValue( ':offset' , $offset,PDO::PARAM_INT);
+        $statement->execute();
+
+        return $this->hydrateUserList($statement);;
     }
 }
