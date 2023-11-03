@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Application\User;
 
+use App\Application\User\UserAccountDTO;
 use App\Application\User\UserSevice;
 use App\Domain\User\UserRepository;
 use App\Infrastructure\User\PdoUserRepository;
@@ -44,7 +45,7 @@ class UserServiceTest extends TestCase
      * @param int $page number
      * @param int $pageSize number
      * @param int $userQuant
-     * @dataProvider data_set_paginated_users
+     * @dataProvider data_set_paginated_users   
      * @return void
      */
     public function test_find_user_page(int $page,int  $pageSize,int $userQuant): void{
@@ -56,8 +57,37 @@ class UserServiceTest extends TestCase
     public static function data_set_paginated_users(): array{
         return [
             [1,10,10],
-         //   [1,20,20],
-          //  [2,20,20],
+            [1,20,20],
+            [2,20,20],
         ];
     }
+
+    /**
+     * @dataProvider data_set_list_user_data
+     * @param int $id
+     * @param string $name
+     * @param string $userType
+     * @param string $taxpayer
+     * @param string $account
+     * @param array $emails
+     * @return void
+     */
+    public function test_list_user_data( int $id, string $name, string $userType, string $taxpayer, string $account, array $emails) {
+        $this->setDataSet('test_find_users');
+        $userService = $this->userSevice;
+        $user = $userService->listUserData($id);
+        $this->assertInstanceOf(UserAccountDTO::class,$user);
+        $this->assertEquals($name,$user->name);
+        $this->assertEquals($userType, $user->userType);
+        $this->assertEquals($taxpayer,$user->taxpayer);
+        $this->assertEquals($account,$user->account);
+        $this->assertEquals($emails,$user->emails);
+
+    }
+    public static function data_set_list_user_data(): array{
+        return [
+            [1,'Joâo Henrique', 'LOGIN', '', '0.00', []],
+        ];
+    }
+
 }
