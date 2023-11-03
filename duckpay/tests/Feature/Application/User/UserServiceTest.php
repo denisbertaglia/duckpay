@@ -3,8 +3,10 @@
 namespace Tests\Feature\Application\User;
 
 use App\Application\User\UserAccountDTO;
+use App\Application\User\UserDTO;
 use App\Application\User\UserSevice;
 use App\Domain\User\UserRepository;
+
 use App\Infrastructure\User\PdoUserRepository;
 use PHPUnit\Framework\TestCase;
 use Tests\Feature\Infrastructure\TestDB;
@@ -20,8 +22,8 @@ class UserServiceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->conn = $this->getConnection();
-        $this->userRepository= new PdoUserRepository($this->conn);
+        $this->conn = $this->getPdoConnection();
+        $this->userRepository = new PdoUserRepository($this->conn);
         $this->userSevice = new UserSevice($this->userRepository);
     }
 
@@ -31,34 +33,70 @@ class UserServiceTest extends TestCase
         $userSevice = $this->userSevice;
         $users = $userSevice->listUsersFilterByTypeWithPagination();
 
-        $this->assertCount(2,$users);
+        $this->assertCount(2, $users);
     }
-    public function test_find_user_second_page():void{
+    public function test_find_user_second_page(): void
+    {
         $this->setDataSet('test_find_users');
         $userSevice = $this->userSevice;
         $users = $userSevice->listUsersFilterByTypeWithPagination(2);
 
-        $this->assertCount(0,$users);
+        $this->assertCount(0, $users);
     }
 
     /**
      * @param int $page number
      * @param int $pageSize number
      * @param int $userQuant
-     * @dataProvider data_set_paginated_users   
+     * @dataProvider data_set_paginated_users
      * @return void
      */
-    public function test_find_user_page(int $page,int  $pageSize,int $userQuant): void{
+    public function test_find_user_page(int $page, int  $pageSize, int $userQuant): void
+    {
         $this->setDataSet('test_paginated_users');
         $userSevice = $this->userSevice;
         $users = $userSevice->listUsersFilterByTypeWithPagination($page, $pageSize);
-        $this->assertCount($userQuant,$users);
+        $this->assertCount($userQuant, $users);
     }
-    public static function data_set_paginated_users(): array{
+    public static function data_set_paginated_users(): array
+    {
         return [
-            [1,10,10],
-            [1,20,20],
-            [2,20,20],
+            [1, 10, 10],
+            [1, 20, 20],
+            [2, 20, 20],
+        ];
+    }
+
+    /**
+     * @param int $page number
+     * @param int $pageSize number
+     * @param int $userQuant
+     * @dataProvider data_set_paginated_users_with_type
+     * @return void
+     */
+    public function test_find_user_page_with_type(int $page, int  $pageSize, int $userQuant, string $userType): void
+    {
+        $this->setDataSet('test_paginated_users');
+        $userSevice = $this->userSevice;
+        $users = $userSevice->listUsersFilterByTypeWithPagination($page, $pageSize, $userType);
+
+        $this->assertCount($userQuant, $users, 'Count of users');
+        $this->assertContainsOnlyInstancesOf(UserDTO::class, $users);
+
+        if ($userType !== 'LOGIN') {
+            $userFilted = array_filter($users, function (UserDTO $u) use ($userType,) {
+                return $u->userType == $userType;
+            });
+            $this->assertCount($userQuant, $userFilted, 'Check types');
+        }
+    }
+    public static function data_set_paginated_users_with_type(): array
+    {
+        return [
+            "CUSTOMER" => [1, 40, 37, 'CUSTOMER'],
+            "LOGIN page 1" => [1, 20, 20, 'LOGIN'],
+            "LOGIN page 2" => [2, 20, 20, 'LOGIN'],
+            "SHOPKEEPER" => [1, 100, 33, 'SHOPKEEPER'],
         ];
     }
 
@@ -87,7 +125,8 @@ class UserServiceTest extends TestCase
     public static function data_set_list_user_data(): array{
         return [
             [1,'Joâo Henrique', 'LOGIN', '', '0.00', []],
+            [2,'Thiago Anton', 'CUSTOMER', '434.234.778-98', '494.44', []],
+            [3,'Marcia Ribeiro', 'SHOPKEEPER', '95.454.908/0001-81', '494.44', []],
         ];
     }
-
 }

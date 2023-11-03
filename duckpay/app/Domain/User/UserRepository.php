@@ -10,4 +10,5 @@ interface UserRepository
     public function findByIdCode(IdentifierCode $id): User | null;
     public function findFinancialEntityByIdCode(IdentifierCode $id): FinancialEntity | null;
     public function findAll(): array;
+    public function findFilterAndPaginatedActiveUsers(UserType $userType, int $offset, int $limit): array;
 }

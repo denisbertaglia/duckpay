@@ -5,25 +5,26 @@ namespace Tests\Feature\Infrastructure\Financial;
 use App\Domain\Financial\FinancialMovementRepository;
 use App\Domain\IdentifierCode;
 use App\Domain\User\UserRepository;
+use App\Infrastructure\Financial\PdoFinancialMovementQuery;
+use App\Infrastructure\Financial\PdoFinancialMovementRepository;
 use App\Infrastructure\User\PdoUserRepository;
 use PHPUnit\Framework\TestCase;
 use Tests\Feature\Infrastructure\TestDB;
-use App\Infrastructure\Financial\PdoFinancialMovementRepository;
 
 class PdoFinancialMovementRepositoryTest extends TestCase
 {
     use TestDB;
     private FinancialMovementRepository $financialMovementRepository;
+
     private UserRepository $userRepository;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $connection = $this->getConnection();
+        $connection = $this->getPdoConnection();
         $this->userRepository = new PdoUserRepository($connection);
-        $this->financialMovementRepository = new PdoFinancialMovementRepository($connection,$this->userRepository);
+        $this->financialMovementRepository = new PdoFinancialMovementRepository($connection);
     }
-
     /**
      * A basic unit test example.
      * @dataProvider dataProviderCreateFinancialMovement
@@ -40,6 +41,8 @@ class PdoFinancialMovementRepositoryTest extends TestCase
     public static function dataProviderCreateFinancialMovement(){
         return [
             ['1','2','9000.00'],
+            ['1','2','8000.00'],
         ];
     }
+
 }

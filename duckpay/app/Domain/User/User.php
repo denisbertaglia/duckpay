@@ -59,7 +59,7 @@ class User
     }
 
     /**
-     * @return string
+     * @return UserType
      */
     public function getType(): UserType
     {

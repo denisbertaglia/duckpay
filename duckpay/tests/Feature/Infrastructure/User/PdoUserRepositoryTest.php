@@ -20,7 +20,7 @@ class PdoUserRepositoryTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->userRepository= new PdoUserRepository($this->getConnection());
+        $this->userRepository= new PdoUserRepository($this->getPdoConnection());
     }
 
     public function test_add_user(): void
@@ -61,6 +61,21 @@ class PdoUserRepositoryTest extends TestCase
         $this->assertContains('LOGIN', $usersType);
 
     }
+    public function test_find_filter_and_paginated(): void
+    {
+        $this->setDataSet('test_find_users');
+        $userType = new UserType();
+        $users = $this->userRepository->findFilterAndPaginatedActiveUsers($userType, 0, 10);
+        $this->assertCount(2, $users);
+
+        $usersType = array_map(function ( User $user){
+            return $user->getType()->getName();
+        }, $users);
+        $this->assertContains('SHOPKEEPER', $usersType);
+        $this->assertContains('CUSTOMER', $usersType);
+
+    }
+
     public function test_find_one_user(): void
     {
         $this->setDataSet('test_find_users');
@@ -115,7 +130,5 @@ class PdoUserRepositoryTest extends TestCase
 
         $this->assertEquals('500.00',$customer->getAccount()->getBalance());
         $this->assertEquals('400.00',$shopkeeper->getAccount()->getBalance());
-
-
     }
 }

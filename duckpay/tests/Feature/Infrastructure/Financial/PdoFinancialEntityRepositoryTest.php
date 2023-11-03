@@ -18,7 +18,7 @@ class PdoFinancialEntityRepositoryTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $connection = $this->getConnection();
+        $connection = $this->getPdoConnection();
         $this->financialEntityRepository = new PdoFinancialEntityRepository($connection);
         $this->userRepository = new PdoUserRepository($connection);
 

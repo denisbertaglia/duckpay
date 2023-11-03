@@ -6,6 +6,13 @@ class FinancialtransferDTO
 {
     public int $id;
     public string $amount;
-    public int $payeer;
-    public int $payee;
+    public string $payeer;
+    public string $payee;
+    public string $date;
+    public function __construct($id, $amount, $payeer, $payee, $date){
+            $this->id = $id;
+            $this->amount = $amount;
+            $this->payeer = $payeer;
+            $this->payee = $payee;
+    }
 }

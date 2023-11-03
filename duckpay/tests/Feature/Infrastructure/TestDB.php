@@ -27,7 +27,7 @@ trait TestDB
         $dataSet = file_get_contents($this->datasetFilePath."$dataSetName.sql");
         $this->db->exec($dataSet);
     }
-    public function getConnection(): \PDO
+    public function getPdoConnection(): \PDO
     {
         $this->createSqliteFile();
         $this->db =  DB::createConnection($this->sqliteFilePath);

@@ -217,28 +217,28 @@ class PdoUserRepository implements UserRepository
         return array_shift( $financialEntity);
     }
 
-    public function findFilterAndPaginated(int $offset = 0, int $limit = 10, UserType $userType = new UserType()): array
+    public function findFilterAndPaginatedActiveUsers(UserType $userType, int $offset = 0, int $limit = 10): array
         {
         $sql = "
         SELECT users.id, users.user_type, users.name
         FROM users
         WHERE
-            EXISTS (SELECT 1 FROM customers WHERE customers.user_id = users.id)
-           OR EXISTS (SELECT 1 FROM shopkeepers WHERE shopkeepers.user_id = users.id)
+            (EXISTS (SELECT 1 FROM customers WHERE customers.user_id = users.id)
+           OR EXISTS (SELECT 1 FROM shopkeepers WHERE shopkeepers.user_id = users.id))
         ";
         $filterType = $userType->getCode() != UserType::TYPE['LOGIN'];
         if($filterType){
-            $sql .= "AND users.user_type = :user_type";
+            $sql .= "AND users.user_type = :user_type ";
         }
         $sql .= "LIMIT :limit OFFSET :offset ";
         $statement =  $this->pdo->prepare($sql);
+
         if($filterType){
             $statement->bindValue( ':user_type' ,$userType->getCode(),PDO::PARAM_INT);
         }
         $statement->bindValue( ':limit' , $limit,PDO::PARAM_INT);
         $statement->bindValue( ':offset' , $offset,PDO::PARAM_INT);
         $statement->execute();
-
         return $this->hydrateUserList($statement);;
     }
 }

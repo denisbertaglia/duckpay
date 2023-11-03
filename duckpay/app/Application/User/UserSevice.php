@@ -22,14 +22,14 @@ class UserSevice
      * @param int $page
      * @param int $pageSize
      * @param array $filter
-     * @return array
+     * @return UserDTO[]
      */
     public function listUsersFilterByTypeWithPagination(int $page=1, int $pageSize=10, string $userType = "LOGIN") :array {
         $pagination = new Pagination($page, $pageSize);
         $offset = $pagination->getOffset();
         $limit = $pagination->getLimit();
         $userTyped = UserType::make($userType);
-        $usersData = $this->userRepository->findFilterAndPaginated($offset, $limit, $userTyped);
+        $usersData = $this->userRepository->findFilterAndPaginatedActiveUsers($userTyped, $offset, $limit);
         $users = array_map(
             function (User $user){
                 $emails = array_map(fn(Email $email) => $email->email(), $user->getEmails());

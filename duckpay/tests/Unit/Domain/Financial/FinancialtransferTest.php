@@ -35,9 +35,9 @@ class FinancialtransferTest extends TestCase
         $amount = '10000';
         $customer = $userCustomer->getFinancialEntity();
         $shopkeeper = $userShopkeeper->getFinancialEntity();
+        $dateTime = date_create()->format('Y-m-d H:i:s');;
 
-
-        $financialtransfer = Financialtransfer::make($idFinancialtransfer, $customer, $shopkeeper, $amount);
+        $financialtransfer = Financialtransfer::make($idFinancialtransfer, $customer, $shopkeeper, $amount,$dateTime);
         $this->assertEquals($idFinancialtransfer, $financialtransfer->getId());
         $this->assertEquals($idShopkeeper, $financialtransfer->getPayee()->getId());
         $this->assertEquals($idCustomer, $financialtransfer->getPayeer()->getId());

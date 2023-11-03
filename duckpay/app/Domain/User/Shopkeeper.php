@@ -18,8 +18,8 @@ class Shopkeeper  implements  FinancialEntity
         $this->taxpayer = $taxpayer;
         $this->account = $account;
     }
-    public static function make(string $id, string $cnpj, string $accountBalance ='0'): Shopkeeper {
-        return new Shopkeeper( new IdentifierCode($id), $cnpj,  new Account($accountBalance));
+    public static function make(string $id, string $taxpayer, string $accountBalance ='0'): Shopkeeper {
+        return new Shopkeeper( new IdentifierCode($id), $taxpayer,  new Account($accountBalance));
     }
     /**
      * @return Account

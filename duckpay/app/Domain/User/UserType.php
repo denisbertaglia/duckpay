@@ -40,7 +40,8 @@ class UserType
 
      */
     public static function make(string $type = 'LOGIN'): self{
-        if(in_array($type,SELF::TYPE)){
+        $typeFlip = array_flip(SELF::TYPE);
+        if(in_array($type,$typeFlip)){
             return new self(SELF::TYPE[$type]);
         }
         return new self(SELF::TYPE['LOGIN']);

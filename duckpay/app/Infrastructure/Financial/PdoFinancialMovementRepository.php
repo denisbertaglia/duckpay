@@ -4,16 +4,16 @@ namespace App\Infrastructure\Financial;
 
 use App\Domain\Financial\FinancialMovementRepository;
 use App\Domain\Financial\Financialtransfer;
-use App\Domain\IdentifierCode;
+use App\Domain\Financial\UserNoFinancialEntity;
 use App\Domain\User\Customer;
 use App\Domain\User\Shopkeeper;
+use App\Domain\User\User;
 use App\Domain\User\UserRepository;
 use Pdo,PDOStatement;
 
 class PdoFinancialMovementRepository implements FinancialMovementRepository
 {
     private Pdo $pdo;
-    private UserRepository $userRepository;
 
     public function __construct(Pdo $pdo)
     {
@@ -35,6 +35,6 @@ class PdoFinancialMovementRepository implements FinancialMovementRepository
         $statement->execute();
         $id = $pdo->lastInsertId();
 
-        return Financialtransfer::make($id, $customer, $shopkeeper, $amount);
+        return Financialtransfer::make($id, $customer, $shopkeeper, $amount, $datetime);
     }
 }
