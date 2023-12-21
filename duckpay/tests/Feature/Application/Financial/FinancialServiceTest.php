@@ -7,6 +7,7 @@ use App\Application\Financial\FinancialtransferDTO;
 use App\Domain\User\UserRepository;
 use App\Infrastructure\Financial\PdoFinancialMovementQuery;
 use App\Infrastructure\User\PdoUserRepository;
+use PDO;
 use Tests\Feature\Infrastructure\TestDB;
 use Tests\TestCase;
 
@@ -16,6 +17,7 @@ class FinancialServiceTest extends TestCase
     private UserRepository $userRepository;
     private PdoFinancialMovementQuery $financialMovementQuery;
     private FinancialService $financialService;
+    private PDO $conn;
 
     protected function setUp(): void{
         parent::setUp();

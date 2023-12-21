@@ -21,7 +21,7 @@ class UserSevice
     /**
      * @param int $page
      * @param int $pageSize
-     * @param array $filter
+     * @param string $userType
      * @return UserDTO[]
      */
     public function listUsersFilterByTypeWithPagination(int $page=1, int $pageSize=10, string $userType = "LOGIN") :array {
@@ -44,6 +44,16 @@ class UserSevice
         );
         return $users;
     }
+    /**
+     * @param string $userType
+     * @return int
+     */
+    public function countUsersFilterByTypeForPagination(string $userType = "LOGIN") :int {
+        $userTyped = UserType::make($userType);
+        $usersCount = $this->userRepository->countFilterAndPaginatedActiveUsers($userTyped);
+        return $usersCount;
+    }
+
         /**
          * @param string $id
          * @return UserAccountDTO

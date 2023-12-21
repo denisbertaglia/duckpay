@@ -61,6 +61,7 @@ class PdoUserRepositoryTest extends TestCase
         $this->assertContains('LOGIN', $usersType);
 
     }
+
     public function test_find_filter_and_paginated(): void
     {
         $this->setDataSet('test_find_users');
@@ -73,7 +74,14 @@ class PdoUserRepositoryTest extends TestCase
         }, $users);
         $this->assertContains('SHOPKEEPER', $usersType);
         $this->assertContains('CUSTOMER', $usersType);
+    }
 
+    public function test_count_filter_and_paginated(): void
+    {
+        $this->setDataSet('test_find_users');
+        $userType = new UserType();
+        $userCount = $this->userRepository->countFilterAndPaginatedActiveUsers($userType);
+        $this->assertEquals(2, $userCount);
     }
 
     public function test_find_one_user(): void

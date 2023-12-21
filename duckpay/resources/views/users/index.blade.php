@@ -18,11 +18,11 @@
                     {{__("painel.All")}}
                 </a>
                 <a class="nav-link {{ ($type == " SHOPKEEPER") ?'active':'' }}"
-                    href="{{route('users.index', ['type' => "SHOPKEEPER"]);}}">
+                    href="{{route('users.index', ['type' => " SHOPKEEPER"]);}}">
                     {{__("painel.Shopkeepers")}}
                 </a>
-                <a class="nav-link {{ ($type == " CUSTOMER") ?'active':''}}"
-                href="{{route('users.index',['type' => "CUSTOMER"]);}}">
+                <a class="nav-link {{ ($type == " CUSTOMER") ?'active':''}}" href="{{route('users.index',['type' => "
+                    CUSTOMER"]);}}">
                     {{__("painel.Buyers")}}
                 </a>
             </div>
@@ -32,7 +32,7 @@
 @endsection
 
 @section('content')
-<table class="table">
+<table class="table table-striped">
     <thead>
         @if(count($users))
         <tr>
@@ -66,7 +66,7 @@
         </tr>
         @empty
         <tr>
-            <td class="text-center"> {{__("no_users")}}.</td>
+            <td class="text-center"> {{__("painel.no_users")}}.</td>
         </tr>
         @endforelse
 

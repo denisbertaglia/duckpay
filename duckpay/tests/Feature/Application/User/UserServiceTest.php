@@ -8,6 +8,7 @@ use App\Application\User\UserSevice;
 use App\Domain\User\UserRepository;
 
 use App\Infrastructure\User\PdoUserRepository;
+use PDO;
 use PHPUnit\Framework\TestCase;
 use Tests\Feature\Infrastructure\TestDB;
 
@@ -18,7 +19,7 @@ class UserServiceTest extends TestCase
 
     private UserRepository $userRepository;
     private UserSevice $userSevice;
-    private  $conn;
+    private  PDO $conn;
     protected function setUp(): void
     {
         parent::setUp();
@@ -71,6 +72,7 @@ class UserServiceTest extends TestCase
      * @param int $page number
      * @param int $pageSize number
      * @param int $userQuant
+     * @param string $userType
      * @dataProvider data_set_paginated_users_with_type
      * @return void
      */
@@ -90,6 +92,7 @@ class UserServiceTest extends TestCase
             $this->assertCount($userQuant, $userFilted, 'Check types');
         }
     }
+
     public static function data_set_paginated_users_with_type(): array
     {
         return [
@@ -99,6 +102,31 @@ class UserServiceTest extends TestCase
             "SHOPKEEPER" => [1, 100, 33, 'SHOPKEEPER'],
         ];
     }
+    /**
+     * @param int $userQuant
+     * @param string $userType
+     * @dataProvider data_set_count_paginated_users_with_type
+     * @return void
+     */
+    public function test_count_user_page_with_type( int $userQuant, string $userType): void
+    {
+        $this->setDataSet('test_paginated_users');
+        $userSevice = $this->userSevice;
+        $users = $userSevice->countUsersFilterByTypeForPagination($userType);
+
+        $this->assertEquals($userQuant, $users, 'Count of users');
+
+    }
+
+    public static function data_set_count_paginated_users_with_type(): array
+    {
+        return [
+            "CUSTOMER" => [ 37, 'CUSTOMER'],
+            "LOGIN" => [70, 'LOGIN'],
+            "SHOPKEEPER" => [33, 'SHOPKEEPER'],
+        ];
+    }
+
 
     /**
      * @dataProvider data_set_list_user_data
